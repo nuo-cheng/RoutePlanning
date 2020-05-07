@@ -24,7 +24,12 @@ public class PriorityQueueElement implements Comparable<PriorityQueueElement>{
     @Override
     public int compareTo(PriorityQueueElement o) {
         // FILL IN CODE - compare elements by priority
-
-        return -1; // change
+        if (priority > o.priority){
+            return 1;
+        } else if (priority < o.priority){
+            return -1;
+        } else {
+            return 0;
+        }
     }
 }
