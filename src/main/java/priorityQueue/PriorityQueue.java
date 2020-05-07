@@ -63,8 +63,21 @@ public class PriorityQueue {
      * @param newPriority new value of priority
      */
     public void reduceKey(int nodeId, int newPriority) {
+        int oldPosition = positions[nodeId];
+        if (oldPosition > 0){
+            PriorityQueueElement target = minHeap[oldPosition];
+            target.setPriority(newPriority);
+            int newPosition = popUp(oldPosition);
+            positions[nodeId] = newPosition;
+        }
+    }
 
-
+    public int popUp(int position){
+        while (minHeap[position].compareTo(minHeap[parent(position)]) < 0){
+            swap(position, parent(position));
+            position = parent(position);
+        }
+        return position;
     }
 
 
@@ -93,7 +106,6 @@ public class PriorityQueue {
     private int rightChild(int pos) {
         return 2 * pos + 1;
     }
-
 
 
     private void pushDown(int position) {
