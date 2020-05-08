@@ -8,6 +8,9 @@ package graph;
  */
 
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +22,7 @@ public class Graph {
     private CityNode[] nodes; // array of nodes of the graph
     private Edge[] adjacencyList; // adjacency list; for each vertex stores a linked list of edges
     private Map<String, Integer> labelsToIndices; // a HashMap that maps each city to the corresponding node id
+    private int cityNodeIndexToAdd = 0;
 
     /**
      * Read graph info from the given file, and create nodes and edges of
@@ -28,6 +32,36 @@ public class Graph {
      */
     public void loadGraph(String filename) {
         // FILL IN CODE
+        String line = "";
+        String splitBy = " ";
+        try(BufferedReader br = new BufferedReader(new FileReader(filename))){
+            br.readLine();
+            numNodes = Integer.parseInt(br.readLine());
+            while ((line = br.readLine()) != "ARCS"){
+                String[] cityNodesInfo = line.split(splitBy);
+                String cityName = cityNodesInfo[0];
+                double x = Double.parseDouble(cityNodesInfo[1]);
+                double y = Double.parseDouble(cityNodesInfo[2]);
+                CityNode newNode = new CityNode(cityName, x, y);
+                addNode(newNode);
+
+            }
+            while((line = br.readLine()) != null){
+                String[] edgesInfo = line.split(splitBy);
+                String cityNameFrom = edgesInfo[0];
+                String cityNameTo = edgesInfo[1];
+                int cost = Integer.parseInt(edgesInfo[2]);
+                int cityFromId = labelsToIndices.get(cityNameFrom);
+                int cityToId = labelsToIndices.get(cityNameTo);
+                Edge ToEdge = new Edge(cityToId, cost);
+                addEdge(cityFromId, ToEdge);
+                Edge backEdge = new Edge(cityFromId, cost);
+                addEdge(cityToId, backEdge);
+
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -40,6 +74,12 @@ public class Graph {
      */
     public void addNode(CityNode node) {
         // FILL IN CODE
+        if (nodes == null){
+            nodes = new CityNode[numNodes];
+        }
+        nodes[cityNodeIndexToAdd] = node;
+        labelsToIndices.put(node.getCity(), cityNodeIndexToAdd);
+        cityNodeIndexToAdd += 1;
     }
 
     /**
