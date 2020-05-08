@@ -11,6 +11,7 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,8 +38,12 @@ public class Graph {
         try(BufferedReader br = new BufferedReader(new FileReader(filename))){
             br.readLine();
             numNodes = Integer.parseInt(br.readLine());
-            while ((line = br.readLine()) != "ARCS"){
+            while (!(line = br.readLine()).equals( "ARCS")){
+//                System.out.println(line);
                 String[] cityNodesInfo = line.split(splitBy);
+//                System.out.println(cityNodesInfo[0]);
+//                System.out.println(cityNodesInfo[1]);
+//                System.out.println(cityNodesInfo[2]);
                 String cityName = cityNodesInfo[0];
                 double x = Double.parseDouble(cityNodesInfo[1]);
                 double y = Double.parseDouble(cityNodesInfo[2]);
@@ -78,6 +83,9 @@ public class Graph {
             nodes = new CityNode[numNodes];
         }
         nodes[cityNodeIndexToAdd] = node;
+        if (labelsToIndices == null){
+            labelsToIndices = new HashMap<>();
+        }
         labelsToIndices.put(node.getCity(), cityNodeIndexToAdd);
         cityNodeIndexToAdd += 1;
     }
@@ -99,6 +107,22 @@ public class Graph {
      */
     public void addEdge(int nodeId, Edge edge) {
         // FILL IN CODE
+        if (adjacencyList == null){
+            adjacencyList = new Edge[numNodes];
+        }
+        if (adjacencyList[nodeId] == null){
+            adjacencyList[nodeId] = edge;
+        } else {
+            Edge current = adjacencyList[nodeId];
+            while (current != null && current.getNext() != null){
+                if (current.getNeighbor() == edge.getNeighbor() && current.getCost() == edge.getCost()){
+                    return;
+                }
+                current = current.getNext();
+            }
+            current.setNext(edge);
+        }
+        numEdges += 1;
     }
 
     /**
@@ -107,8 +131,7 @@ public class Graph {
      * @return its integer id
      */
     public int getId(CityNode city) {
-
-        return -1; // Don't forget to change this
+        return labelsToIndices.get(city.getCity());
     }
 
     /**
@@ -124,6 +147,18 @@ public class Graph {
         int i = 0;
         Point[][] edges2D = new Point[numEdges][2];
         // FILL IN CODE
+        for (int j = 0; j < numNodes; j++){
+            Edge current = adjacencyList[j];
+            while (current != null){
+                int sourceVertexId = j;
+                Point sourceVertex = nodes[sourceVertexId].getLocation();
+                int destnVertexId = current.getNeighbor();
+                Point destnVertex = nodes[destnVertexId].getLocation();
+                edges2D[i][0] = sourceVertex;
+                edges2D[i][1] = destnVertex;
+                i += 1;
+            }
+        }
 
         return edges2D;
     }
@@ -202,5 +237,35 @@ public class Graph {
                 return v;
         }
         return null;
+    }
+
+    public void printCityNodes(){
+        for (int i = 0; i < numNodes; i++){
+            CityNode current = nodes[i];
+            System.out.println(i + ": " + current.getCity());
+        }
+    }
+
+    public void printAdjacencyList(){
+        String result = "";
+        for (int i = 0; i < adjacencyList.length; i++){
+            result += i + ": ";
+            Edge current = adjacencyList[i];
+            while (current != null){
+                result += current.toString() + "  ";
+                current = current.getNext();
+            }
+            result += '\n';
+
+        }
+        System.out.println(result);
+    }
+
+
+    public static void main(String[] args) {
+        Graph graph = new Graph();
+        graph.loadGraph("USA.txt");
+        graph.printCityNodes();
+        graph.printAdjacencyList();
     }
 }

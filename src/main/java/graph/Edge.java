@@ -38,4 +38,9 @@ class Edge {
     public void setNext(Edge next) {
         this.next = next;
     }
+
+    public String toString(){
+        return neighbor + "(" + cost + ")";
+    }
+
 }
