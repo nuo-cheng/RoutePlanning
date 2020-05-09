@@ -279,6 +279,15 @@ public class Graph {
         System.out.println(result);
     }
 
+    public Edge[] getAdjacencyList() {
+        return adjacencyList;
+    }
+
+    public CityNode[] getNodesArray(){
+        return nodes;
+    }
+
+
 
     public static void main(String[] args) {
         Graph graph = new Graph();

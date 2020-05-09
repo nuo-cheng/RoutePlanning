@@ -7,6 +7,8 @@ package graph;
 
 import java.awt.*;
 import java.util.List;
+//import java.util.PriorityQueue;
+import priorityQueue.PriorityQueue;
 
 public class Dijkstra {
     private Graph graph; // stores the graph of CityNode-s and edges connecting them
@@ -43,7 +45,43 @@ public class Dijkstra {
 
         // The result should be in an instance variable called "shortestPath" and
         // should also be returned by the method
-        return null; // don't forget to change it
+
+        int cityNum = graph.numNodes();
+        int[][] dijkstraTable = new int[cityNum][2];
+        for (int i = 0; i < dijkstraTable.length; i++){
+            for (int j = 0; j < 2; j++){
+                dijkstraTable[i][0] = Integer.MAX_VALUE;
+                dijkstraTable[i][1] = -1;
+            }
+        }
+        PriorityQueue pQueue = new PriorityQueue(cityNum);
+        Edge[] adjacencyList = graph.getAdjacencyList();
+        int originCityId = graph.getId(origin);
+        int destinationCityId = graph.getId(destination);
+        dijkstraTable[originCityId][0] = 0;
+        pQueue.insert(originCityId, 0);
+
+        while (pQueue != null){
+            int currentCityId = pQueue.removeMin();
+            Edge currentEdge = adjacencyList[currentCityId];
+            while (currentEdge != null){
+                int neighbor = currentEdge.getNeighbor();
+                int cost = currentEdge.getCost();
+                dijkstraTable[neighbor][1] = currentCityId;
+                dijkstraTable[neighbor][0] = cost + dijkstraTable[currentCityId][0];
+
+                pQueue.insert(neighbor, cost);
+
+                currentEdge = currentEdge.getNext();
+            }
+        }
+
+
+
+
+
+
+        return shortestPath; // don't forget to change it
     }
 
     /**
