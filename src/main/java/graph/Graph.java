@@ -175,6 +175,10 @@ public class Graph {
         }
         Point[] pnodes = new Point[this.nodes.length];
         // FILL IN CODE
+        for (int i = 0; i < nodes.length; i++){
+            Point p = nodes[i].getLocation();
+            pnodes[i] = p;
+        }
 
         return pnodes;
     }
@@ -191,7 +195,10 @@ public class Graph {
         }
         String[] labels = new String[nodes.length];
         // FILL IN CODE
-
+        for (int i = 0; i < nodes.length; i++){
+            String cityName = nodes[i].getCity();
+            labels[i] = cityName;
+        }
 
         return labels;
 
@@ -207,6 +214,17 @@ public class Graph {
         Point[][] edges2D = new Point[pathOfNodes.size()-1][2];
         // Each "edge" is an array of size two (one Point is origin, one Point is destination)
         // FILL IN CODE
+        for (int j = 0; j < pathOfNodes.size() - 1; j++){
+            int fromNodeId = pathOfNodes.get(i);
+            CityNode fromNode = nodes[fromNodeId];
+            Point fromP = fromNode.getLocation();
+            int toNodeId = pathOfNodes.get(i);
+            CityNode toNode = nodes[toNodeId];
+            Point toP = toNode.getLocation();
+            edges2D[i][0] = fromP;
+            edges2D[i][1] = toP;
+            i += 1;
+        }
 
         return edges2D;
     }
