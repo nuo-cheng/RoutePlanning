@@ -118,11 +118,19 @@ public class PriorityQueue {
 
             // the value of the smallest child is less than value of current,
             // the heap is already valid
-            if (minHeap[position].compareTo(minHeap[smallestchild]) <= 0)
+            System.out.println("position: " + minHeap[position].getId());
+            System.out.println("smallest child: " + minHeap[smallestchild].getId());
+            if (minHeap[position].compareTo(minHeap[smallestchild]) <= 0){
                 return;
+            }
+
             swap(position, smallestchild);
             position = smallestchild;
         }
+    }
+
+    public int getActualSize() {
+        return actualSize;
     }
 
     public static void main(String[] args) {

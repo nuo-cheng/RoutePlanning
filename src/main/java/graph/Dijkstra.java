@@ -6,6 +6,7 @@ package graph;
  */
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 //import java.util.PriorityQueue;
 import priorityQueue.PriorityQueue;
@@ -45,14 +46,12 @@ public class Dijkstra {
 
         // The result should be in an instance variable called "shortestPath" and
         // should also be returned by the method
-
+        shortestPath = new ArrayList<>();
         int cityNum = graph.numNodes();
         int[][] dijkstraTable = new int[cityNum][2];
         for (int i = 0; i < dijkstraTable.length; i++){
-            for (int j = 0; j < 2; j++){
-                dijkstraTable[i][0] = Integer.MAX_VALUE;
-                dijkstraTable[i][1] = -1;
-            }
+            dijkstraTable[i][0] = Integer.MAX_VALUE;
+            dijkstraTable[i][1] = -1;
         }
         PriorityQueue pQueue = new PriorityQueue(cityNum);
         Edge[] adjacencyList = graph.getAdjacencyList();
@@ -61,13 +60,13 @@ public class Dijkstra {
         dijkstraTable[originCityId][0] = 0;
         pQueue.insert(originCityId, 0);
 
-        while (pQueue != null){
+        while (pQueue.getActualSize() != 0){
             int fromCityId = pQueue.removeMin();
             Edge currentEdge = adjacencyList[fromCityId];
             while (currentEdge != null){
                 int neighbor = currentEdge.getNeighbor();
                 int cost = currentEdge.getCost();
-                int previousCost = dijkstraTable[fromCityId][1];
+                int previousCost = dijkstraTable[fromCityId][0];
                 if (cost + previousCost < dijkstraTable[neighbor][0]){
                     dijkstraTable[neighbor][0] = cost + dijkstraTable[fromCityId][0];
                     dijkstraTable[neighbor][1] = fromCityId;
@@ -85,7 +84,7 @@ public class Dijkstra {
             pathToAdd = dijkstraTable[pathToAdd][1];
             shortestPath.add(0, pathToAdd);
         }
-        shortestPath.add(0, originCityId);
+//        shortestPath.add(0, originCityId);
 
         return shortestPath; // don't forget to change it
     }
@@ -113,8 +112,10 @@ public class Dijkstra {
         Graph graph = new Graph();
         Dijkstra dijkstra = new Dijkstra("USA.txt", graph);
         CityNode[] cityNodes = graph.getNodesArray();
-        CityNode from = cityNodes[17];
-        CityNode to = cityNodes[3];
+        CityNode from = cityNodes[13];
+        CityNode to = cityNodes[9];
+        graph.printCityNodes();
+        graph.printAdjacencyList();
         List<Integer> shortestPath = dijkstra.computeShortestPath(from, to);
         System.out.println(shortestPath);
     }
