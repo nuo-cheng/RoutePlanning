@@ -120,6 +120,9 @@ public class Graph {
                 }
                 current = current.getNext();
             }
+            if (current.getNeighbor() == edge.getNeighbor() && current.getCost() == edge.getCost()){
+                return;
+            }
             current.setNext(edge);
         }
         numEdges += 1;
@@ -146,6 +149,7 @@ public class Graph {
     public Point[][] getEdges() {
         int i = 0;
         Point[][] edges2D = new Point[numEdges][2];
+        System.out.println(numEdges);
         // FILL IN CODE
         for (int j = 0; j < numNodes; j++){
             Edge current = adjacencyList[j];
@@ -156,6 +160,7 @@ public class Graph {
                 Point destnVertex = nodes[destnVertexId].getLocation();
                 edges2D[i][0] = sourceVertex;
                 edges2D[i][1] = destnVertex;
+                current = current.getNext();
                 i += 1;
             }
         }
@@ -218,7 +223,7 @@ public class Graph {
             int fromNodeId = pathOfNodes.get(i);
             CityNode fromNode = nodes[fromNodeId];
             Point fromP = fromNode.getLocation();
-            int toNodeId = pathOfNodes.get(i);
+            int toNodeId = pathOfNodes.get(i + 1);
             CityNode toNode = nodes[toNodeId];
             Point toP = toNode.getLocation();
             edges2D[i][0] = fromP;
