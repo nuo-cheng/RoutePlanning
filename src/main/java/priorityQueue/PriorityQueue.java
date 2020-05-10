@@ -25,17 +25,18 @@ public class PriorityQueue {
      *  for this nodeId in Dikstra's algorithm. */
     public void insert(int nodeId, int priority) {
         // FILL IN CODE
-        actualSize++;
-        PriorityQueueElement elem = new PriorityQueueElement(nodeId, priority);
-        minHeap[actualSize] = elem;
+        if (positions[nodeId] == -1){
+            actualSize++;
+            PriorityQueueElement elem = new PriorityQueueElement(nodeId, priority);
+            minHeap[actualSize] = elem;
 
-        int current = actualSize;
-        while (minHeap[current].compareTo(minHeap[parent(current)]) < 0) {
-            swap(current, parent(current));
-            current = parent(current);
+            int current = actualSize;
+            while (minHeap[parent(current)] != null && minHeap[current].compareTo(minHeap[parent(current)]) < 0) {
+                swap(current, parent(current));
+                current = parent(current);
+            }
+            positions[nodeId] = current;
         }
-        positions[nodeId] = current;
-
     }
 
     /**

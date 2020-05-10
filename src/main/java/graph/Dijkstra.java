@@ -62,13 +62,16 @@ public class Dijkstra {
         pQueue.insert(originCityId, 0);
 
         while (pQueue != null){
-            int currentCityId = pQueue.removeMin();
-            Edge currentEdge = adjacencyList[currentCityId];
+            int fromCityId = pQueue.removeMin();
+            Edge currentEdge = adjacencyList[fromCityId];
             while (currentEdge != null){
                 int neighbor = currentEdge.getNeighbor();
                 int cost = currentEdge.getCost();
-                dijkstraTable[neighbor][1] = currentCityId;
-                dijkstraTable[neighbor][0] = cost + dijkstraTable[currentCityId][0];
+                int previousCost = dijkstraTable[fromCityId][1];
+                if (cost + previousCost < dijkstraTable[neighbor][0]){
+                    dijkstraTable[neighbor][0] = cost + dijkstraTable[fromCityId][0];
+                    dijkstraTable[neighbor][1] = fromCityId;
+                }
 
                 pQueue.insert(neighbor, cost);
 
@@ -76,10 +79,13 @@ public class Dijkstra {
             }
         }
 
-
-
-
-
+        int pathToAdd = destinationCityId;
+        shortestPath.add(pathToAdd);
+        while (pathToAdd != originCityId){
+            pathToAdd = dijkstraTable[pathToAdd][1];
+            shortestPath.add(0, pathToAdd);
+        }
+        shortestPath.add(0, originCityId);
 
         return shortestPath; // don't forget to change it
     }
@@ -101,6 +107,16 @@ public class Dijkstra {
      */
     public void resetPath() {
         shortestPath = null;
+    }
+
+    public static void main(String[] args) {
+        Graph graph = new Graph();
+        Dijkstra dijkstra = new Dijkstra("USA.txt", graph);
+        CityNode[] cityNodes = graph.getNodesArray();
+        CityNode from = cityNodes[17];
+        CityNode to = cityNodes[3];
+        List<Integer> shortestPath = dijkstra.computeShortestPath(from, to);
+        System.out.println(shortestPath);
     }
 
 }
