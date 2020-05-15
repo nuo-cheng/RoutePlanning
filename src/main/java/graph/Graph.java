@@ -23,7 +23,7 @@ public class Graph {
     private CityNode[] nodes; // array of nodes of the graph
     private Edge[] adjacencyList; // adjacency list; for each vertex stores a linked list of edges
     private Map<String, Integer> labelsToIndices; // a HashMap that maps each city to the corresponding node id
-    private int cityNodeIndexToAdd = 0;
+    private int cityNodeIndexToAdd = 0; //an int to remember the index when adding nodes to CityNode[] nodes
 
     /**
      * Read graph info from the given file, and create nodes and edges of
@@ -38,6 +38,8 @@ public class Graph {
         try(BufferedReader br = new BufferedReader(new FileReader(filename))){
             br.readLine();
             numNodes = Integer.parseInt(br.readLine());
+
+            //load city names
             while (!(line = br.readLine()).equals( "ARCS")){
 //                System.out.println(line);
                 String[] cityNodesInfo = line.split(splitBy);
@@ -51,6 +53,8 @@ public class Graph {
                 addNode(newNode);
 
             }
+
+            //load edges
             while((line = br.readLine()) != null){
                 String[] edgesInfo = line.split(splitBy);
                 String cityNameFrom = edgesInfo[0];
@@ -58,6 +62,8 @@ public class Graph {
                 int cost = Integer.parseInt(edgesInfo[2]);
                 int cityFromId = labelsToIndices.get(cityNameFrom);
                 int cityToId = labelsToIndices.get(cityNameTo);
+
+                //add to edge and back edge
                 Edge ToEdge = new Edge(cityToId, cost);
                 addEdge(cityFromId, ToEdge);
                 Edge backEdge = new Edge(cityFromId, cost);
@@ -120,6 +126,7 @@ public class Graph {
                 }
                 current = current.getNext();
             }
+            //double check not repeating, because the check in the while loop will skip the last node
             if (current.getNeighbor() == edge.getNeighbor() && current.getCost() == edge.getCost()){
                 return;
             }
@@ -149,17 +156,23 @@ public class Graph {
     public Point[][] getEdges() {
         int i = 0;
         Point[][] edges2D = new Point[numEdges][2];
-        System.out.println(numEdges);
+//        System.out.println(numEdges);
         // FILL IN CODE
+        //loop each index through adjacency list
         for (int j = 0; j < numNodes; j++){
             Edge current = adjacencyList[j];
+            //loop through each edge
             while (current != null){
+                //get source
                 int sourceVertexId = j;
                 Point sourceVertex = nodes[sourceVertexId].getLocation();
+                //get target
                 int destnVertexId = current.getNeighbor();
                 Point destnVertex = nodes[destnVertexId].getLocation();
+                //set point value
                 edges2D[i][0] = sourceVertex;
                 edges2D[i][1] = destnVertex;
+
                 current = current.getNext();
                 i += 1;
             }
@@ -220,12 +233,16 @@ public class Graph {
         // Each "edge" is an array of size two (one Point is origin, one Point is destination)
         // FILL IN CODE
         for (int j = 0; j < pathOfNodes.size() - 1; j++){
+            //get id -> get node -> get position
             int fromNodeId = pathOfNodes.get(i);
             CityNode fromNode = nodes[fromNodeId];
             Point fromP = fromNode.getLocation();
+            //next id -> node -> position
             int toNodeId = pathOfNodes.get(i + 1);
             CityNode toNode = nodes[toNodeId];
             Point toP = toNode.getLocation();
+
+            //set result 2d array
             edges2D[i][0] = fromP;
             edges2D[i][1] = toP;
             i += 1;

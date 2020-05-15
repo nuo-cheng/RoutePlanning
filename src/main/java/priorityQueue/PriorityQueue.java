@@ -25,16 +25,20 @@ public class PriorityQueue {
      *  for this nodeId in Dikstra's algorithm. */
     public void insert(int nodeId, int priority) {
         // FILL IN CODE
-        if (positions[nodeId] == -1){
+        //insert if value is -1, means that we are not visited yet
+        if (positions[nodeId] == -1 && positions[nodeId] != 0){
+            //add new element to index [actualSize]
             actualSize++;
             PriorityQueueElement elem = new PriorityQueueElement(nodeId, priority);
             minHeap[actualSize] = elem;
 
+            //swap to the right place
             int current = actualSize;
             while (minHeap[parent(current)] != null && minHeap[current].compareTo(minHeap[parent(current)]) < 0) {
                 swap(current, parent(current));
                 current = parent(current);
             }
+            //update position
             positions[nodeId] = current;
         }
     }
@@ -46,12 +50,14 @@ public class PriorityQueue {
      */
     public int removeMin() {
         // FILL IN CODE
-
+        //swap min with the last element
         swap(1, actualSize);
         actualSize--;
+        //pushdown to the right position
         if (actualSize != 0)
             pushDown(1);
 
+        //set remove element's position to 0, mean that already dequeue
         positions[minHeap[actualSize + 1].getId()] = 0;
 
         return minHeap[actualSize + 1].getId(); // don't forget to change it
@@ -65,16 +71,21 @@ public class PriorityQueue {
      */
     public void reduceKey(int nodeId, int newPriority) {
         int oldPosition = positions[nodeId];
+        //if still in the queue
         if (oldPosition > 0){
+            //get element
             PriorityQueueElement target = minHeap[oldPosition];
+            //set new value
             target.setPriority(newPriority);
+            //pop up to the right position
             int newPosition = popUp(oldPosition);
-            positions[nodeId] = newPosition;
+            //update position
+//            positions[nodeId] = newPosition;
         }
     }
 
     public int popUp(int position){
-        while (minHeap[position].compareTo(minHeap[parent(position)]) < 0){
+        while (minHeap[parent(position)] != null && minHeap[position].compareTo(minHeap[parent(position)]) < 0){
             swap(position, parent(position));
             position = parent(position);
         }
@@ -90,8 +101,17 @@ public class PriorityQueue {
     private void swap(int pos1, int pos2) {
         PriorityQueueElement tmp;
         tmp = minHeap[pos1];
+
+
+        int pos1Id = minHeap[pos1].getId();
+        int pos2Id = minHeap[pos2].getId();
+
         minHeap[pos1] = minHeap[pos2];
         minHeap[pos2] = tmp;
+
+        positions[pos1Id] = pos2;
+        positions[pos2Id] = pos1;
+
     }
 
 

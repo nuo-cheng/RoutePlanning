@@ -48,37 +48,54 @@ public class Dijkstra {
         // should also be returned by the method
         shortestPath = new ArrayList<>();
         int cityNum = graph.numNodes();
+        //initialize Dijkstra Table
         int[][] dijkstraTable = new int[cityNum][2];
         for (int i = 0; i < dijkstraTable.length; i++){
             dijkstraTable[i][0] = Integer.MAX_VALUE;
             dijkstraTable[i][1] = -1;
         }
+
+        //create priority queue
         PriorityQueue pQueue = new PriorityQueue(cityNum);
+
         Edge[] adjacencyList = graph.getAdjacencyList();
         int originCityId = graph.getId(origin);
         int destinationCityId = graph.getId(destination);
+
+        //set up starting point
         dijkstraTable[originCityId][0] = 0;
         pQueue.insert(originCityId, 0);
 
         while (pQueue.getActualSize() != 0){
+            //get next starting point from priority queue
             int fromCityId = pQueue.removeMin();
+            //loop through starting point's edges
             Edge currentEdge = adjacencyList[fromCityId];
             while (currentEdge != null){
+                //get neighbor & cost
                 int neighbor = currentEdge.getNeighbor();
                 int cost = currentEdge.getCost();
                 int previousCost = dijkstraTable[fromCityId][0];
+                //if shorter then update
                 if (cost + previousCost < dijkstraTable[neighbor][0]){
                     dijkstraTable[neighbor][0] = cost + dijkstraTable[fromCityId][0];
                     dijkstraTable[neighbor][1] = fromCityId;
+                    // if already add in the queue, reduce the priority
+                    if (pQueue.positions[neighbor] != -1 && pQueue.positions[neighbor] != 0){
+                        pQueue.reduceKey(neighbor, dijkstraTable[neighbor][0]);
+                    }
                 }
 
-                pQueue.insert(neighbor, cost);
+                pQueue.insert(neighbor, dijkstraTable[neighbor][0]);
 
                 currentEdge = currentEdge.getNext();
             }
         }
 
+        //add path result from back to front
         int pathToAdd = destinationCityId;
+        int cost = dijkstraTable[destinationCityId][0];
+        System.out.println(cost);
         shortestPath.add(pathToAdd);
         while (pathToAdd != originCityId){
             pathToAdd = dijkstraTable[pathToAdd][1];
